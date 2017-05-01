@@ -28,8 +28,9 @@ import triangle
 ########         Number of Layers must be Manually assigned as is the gap between layers        #########
 #########################################################################################################
 
-NumLayers = 3;
-LayerGap = .2;
+filename = 'demo_for_Bala_and_Ben.dcel'    #### dcel file
+NumLayers = 3;                             #### number of layers
+LayerGap = .2;                             #### set gap between layers
 
 
 ###################################################################################
@@ -63,7 +64,7 @@ for i in range(1,NumLayers+1):
   Collection["IEdgeListLayer{0}".format(i)] = [];         #### Initialize List of Edges in the interior of each layer
   Collection["FacesLayer{0}".format(i)] = {};             #### Initialize Dictionary of Faces for each layer
   Collection["Face2EdgeKey{0}".format(i)] = {};           #### Initialize Dictionary of Faces to Edge Key
-  Collection["MinEdgeLength{0}".format(i)] = 3.6;           #### Keep track of the min Edge lengh
+  Collection["MinEdgeLength{0}".format(i)] = 3.6;         #### Keep track of the min Edge lengh
 
 ######################################################################################
 ####################      Define Global Variables and Restrictions     ###############
@@ -74,21 +75,21 @@ timelim = 1500.0;                                         #### Set Cplex Time li
 Gaplim = 0.05;                                            #### Set the gap limit to optimal solution for Cplex
 Solim = 1;                                                #### Set the Number of Solutions necessary to obtain before Cplex terminates
 NodeWeight = 0;                                           #### Set the weight placed on each node in the LP
-PotentialRadius = 10*LayerGap;                             #### Set the radius for which to search for possible starting nodes on the next layer from the ending node on the current layer
-BoundaryGap = 0.2;
-InteriorGap = 0.20;
+PotentialRadius = 10*LayerGap;                            #### Set the radius for which to search for possible starting nodes on the next layer from the ending node on the current layer
+BoundaryGap = 0.2;                                        #### Set gap limit for boundary passes
+InteriorGap = 0.20;                                       #### Set gap limit for interior passes
 
 # Thickness Constraint and Overlap Incentive#
 
-VtxRad = LayerGap+1;                                       #### Set the maximal accepatable distance a node can be away from the path without being on it
+VtxRad = LayerGap+1;                                      #### Set the maximal accepatable distance a node can be away from the path without being on it
 OverlapIncentive = 2;                                     #### Set the weight on each edge that overlaps an edge used in the previous layer
-AnticipateIncentive = 1;                                   #### Set the weight on the edges in the current layer that are overlapped by existing edges in the next layer
-NoPrintLinePenalty = -3.0;
-VerticalMovePenalty = -0.25;
+AnticipateIncentive = 1;                                  #### Set the weight on the edges in the current layer that are overlapped by existing edges in the next layer
+NoPrintLinePenalty = -3.0;                                #### Set penalty for use of blue "no print" plane edges
+VerticalMovePenalty = -0.25;                              #### Set penalty for use of blue "no print" vertical edges between duplicate nodes
 
-############# Simple Defs ################
+############# Simple Defs ################                #### Sometimes used sometimes not
 
-def substract_lists(a, b):                                 #### Input is two vectors of the same length and output a vector of the same length whose entries are the difference in the corresponding entries of the input vectors (subtracts 1st - 2nd)
+def substract_lists(a, b):                                #### Input is two vectors of the same length and output a vector of the same length whose entries are the difference in the corresponding entries of the input vectors (subtracts 1st - 2nd)
     if len(a) != len(b):
       print "Lists not length compatible";
       quit();
@@ -98,7 +99,7 @@ def substract_lists(a, b):                                 #### Input is two vec
         val[i] = abs(a[i] - b[i]);
     return val
 
-def CosAngleBtwConEdges(u1,u2,u3,LU,LV):                   #### Input is 3 vertices representing two connected edges with u2 the vertex in common, and LU (the length of edge u1,u2) and LV (the length of edge u2,u3)
+def CosAngleBtwConEdges(u1,u2,u3,LU,LV):                  #### Input is 3 vertices representing two connected edges with u2 the vertex in common, and LU (the length of edge u1,u2) and LV (the length of edge u2,u3)
   if len(u1) != len(u2) or len(u3) != len(u2):             #### Output is cosine of the angel between the two edges
     print "Lists not length compatible";
     quit();
@@ -120,10 +121,8 @@ def CosAngleBtwConEdges(u1,u2,u3,LU,LV):                   #### Input is 3 verti
 ##############################################################################
 ###      Original Mesh: Import Node Information into dictionay format      ###
 ##############################################################################
-###    Stores vertices by vertex number as [float_1, float_2, float_3]     ###
-##############################################################################
 
-#### Import Interior Information
+#### Begin Import of Interior Information layer at a time. Should be convertec to called function
 
 for NL in range(1,NumLayers+1):
   NumNodes = 0;
@@ -140,7 +139,7 @@ for NL in range(1,NumLayers+1):
   count = 0;
   i=0;
   FEKeyInd = 0;
-  with open('demo_for_Bala_and_Ben.dcel') as f:
+  with open(filename) as f:
     for line in f.readlines():
       if Catcount > 3:
         break
