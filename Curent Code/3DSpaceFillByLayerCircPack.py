@@ -1266,6 +1266,33 @@ for k in range(1,NumLayers+1):                                                ##
 ####      Additional Constraints:  Optional constraints, Band, Curvature, Boundary Edge Print, Duplicate Edge Restraint          ####
 #####################################################################################################################################
 
+##### Band Constraints (11) ########
+
+# if Boundary == 0:
+#   if k >=0:
+#     for r in range(1,80,2):
+#       my_rhs = ones(1);
+#       prob.linear_constraints.add(rhs= my_rhs);
+#
+#       for j in range(0,NumEdges):
+#         Nodea = int(Edges[j+1][0]);
+#         Nodeb = int(Edges[j+1][1]);
+#
+#         Nodeay = Nodes[Nodea][1];
+#         Nodeby = Nodes[Nodeb][1];
+#
+#         if Nodeay > 2*r-1 and Nodeby < 2*r-1:
+#           prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+#
+#         if Nodeay < 2*r-1 and Nodeby > 2*r-1:
+#           prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+#
+#       prob.linear_constraints.set_senses(constraintrowindex, "L");
+#       constraintrowindex = constraintrowindex+1;
+
+
+##### Curvature Constraints (12-13) at bottom of document in currently "currently unused section as it is a large block of code"
+
 
     ######## Must print all original boundary edges (14) ##########
     if Boundary == 1:
@@ -1304,30 +1331,116 @@ for k in range(1,NumLayers+1):                                                ##
           prob.linear_constraints.set_coefficients(x, E2, 1);
           prob.linear_constraints.set_senses(x, "L");
 
-#### Annular Constraints (15) ########
-    if Boundary == 0:
-      center = [1.0,1.0,0.0];
-      if k >=0:
-        # for r in [2.5]:
-        for r in [0.5,1.0,1.5]:
-          my_rhs = ones(1);
-          prob.linear_constraints.add(rhs= my_rhs);
+#### Annular Constraints (16) ########
+    # if Boundary == 0:
+    #   center = [1.0,1.0,0.0];
+    #   if k >=0:
+    #     # for r in [2.5]:
+    #     for r in [0.5,1.0,1.5]:
+    #       my_rhs = ones(1);
+    #       prob.linear_constraints.add(rhs= my_rhs);
+    #
+    #       for j in range(0,NumEdges):
+    #         Nodea = int(Edges[j+1][0]);
+    #         Nodeb = int(Edges[j+1][1]);
+    #
+    #         Nodea = Nodes[Nodea][0],Nodes[Nodea][1],0.0
+    #         Nodeb = Nodes[Nodeb][0],Nodes[Nodeb][1],0.0
+    #
+    #         if scipy.spatial.distance.pdist([Nodea,array(center)])[0] > r and scipy.spatial.distance.pdist([Nodeb,array(center)])[0] < r:
+    #           prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+    #
+    #         if scipy.spatial.distance.pdist([Nodea,array(center)])[0] < r and scipy.spatial.distance.pdist([Nodeb,array(center)])[0] > r:
+    #           prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+    #
+    #       prob.linear_constraints.set_senses(constraintrowindex, "L");
+    #       constraintrowindex = constraintrowindex+1;
 
-          for j in range(0,NumEdges):
-            Nodea = int(Edges[j+1][0]);
-            Nodeb = int(Edges[j+1][1]);
+# if Boundary == 0:
+#   center = 2*[4.5,24.5,0.0];
+#   if k >=0:
+#     # for r in [2.5]:
+#     for r in [2, 3, 4, 5, 6, 7, 8]:
+#       my_rhs = ones(1);
+#       prob.linear_constraints.add(rhs= my_rhs);
+#
+#       for j in range(0,NumEdges):
+#         Nodea = int(Edges[j+1][0]);
+#         Nodeb = int(Edges[j+1][1]);
+#
+#         Nodea = Nodes[Nodea][0],Nodes[Nodea][1],0.0
+#         Nodeb = Nodes[Nodeb][0],Nodes[Nodeb][1],0.0
+#
+#         if scipy.spatial.distance.pdist([Nodea,array(center)])[0] > r and scipy.spatial.distance.pdist([Nodeb,array(center)])[0] < r:
+#           prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+#
+#         if scipy.spatial.distance.pdist([Nodea,array(center)])[0] < r and scipy.spatial.distance.pdist([Nodeb,array(center)])[0] > r:
+#           prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+#
+#       prob.linear_constraints.set_senses(constraintrowindex, "L");
+#       constraintrowindex = constraintrowindex+1;
 
-            Nodea = Nodes[Nodea][0],Nodes[Nodea][1],0.0
-            Nodeb = Nodes[Nodeb][0],Nodes[Nodeb][1],0.0
+##### Boxed Annular Constraints (16a) ########
 
-            if scipy.spatial.distance.pdist([Nodea,array(center)])[0] > r and scipy.spatial.distance.pdist([Nodeb,array(center)])[0] < r:
-              prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+# if Boundary == 0:
+#   center = [9.0,9.0,0.0];
+#   if k >=0:
+#     # for r in [2.5]:
+#     for r in [2, 4, 6, 8, 10]:
+#       my_rhs = ones(1);
+#       prob.linear_constraints.add(rhs= my_rhs);
+#
+#       for j in range(0,NumEdges):
+#         Nodea = int(Edges[j+1][0]);
+#         Nodeb = int(Edges[j+1][1]);
+#
+#         Nodea = Nodes[Nodea][0],Nodes[Nodea][1],0.0
+#         Nodeb = Nodes[Nodeb][0],Nodes[Nodeb][1],0.0
+#
+#         if abs(Nodeb[0]-center[0]) < r and abs(Nodeb[1]-center[1]) < r:
+#             if abs(Nodea[0]-center[0]) > r or abs(Nodea[1]-center[1]) > r:
+#                 prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+#
+#
+#         elif abs(Nodea[0]-center[0]) < r and abs(Nodea[1]-center[1]) < r:
+#             if  abs(Nodeb[0]-center[0]) > r or abs(Nodeb[1]-center[1]) > r:
+#                 prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+#
+#       prob.linear_constraints.set_senses(constraintrowindex, "L");
+#       constraintrowindex = constraintrowindex+1;
 
-            if scipy.spatial.distance.pdist([Nodea,array(center)])[0] < r and scipy.spatial.distance.pdist([Nodeb,array(center)])[0] > r:
-              prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
 
-          prob.linear_constraints.set_senses(constraintrowindex, "L");
-          constraintrowindex = constraintrowindex+1;
+# if Boundary == 0:
+#   center = [9.0,49.0,0.0];
+#   if k >=0:
+#     # for r in [2.5]:
+#     for r in [2, 4, 6, 8, 10]:
+#       my_rhs = ones(1);
+#       prob.linear_constraints.add(rhs= my_rhs);
+#
+#       for j in range(0,NumEdges):
+#         Nodea = int(Edges[j+1][0]);
+#         Nodeb = int(Edges[j+1][1]);
+#
+#         Nodea = Nodes[Nodea][0],Nodes[Nodea][1],0.0
+#         Nodeb = Nodes[Nodeb][0],Nodes[Nodeb][1],0.0
+#
+#         if abs(Nodeb[0]-center[0]) < r and abs(Nodeb[1]-center[1]) < r:
+#             if abs(Nodea[0]-center[0]) > r or abs(Nodea[1]-center[1]) > r:
+#                 prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+#
+#
+#         elif abs(Nodea[0]-center[0]) < r and abs(Nodea[1]-center[1]) < r:
+#             if  abs(Nodeb[0]-center[0]) > r or abs(Nodeb[1]-center[1]) > r:
+#                 prob.linear_constraints.set_coefficients(constraintrowindex, j, 1);
+#
+#       prob.linear_constraints.set_senses(constraintrowindex, "L");
+#       constraintrowindex = constraintrowindex+1;
+#
+#
+
+
+
 
     ###########################################################################################
     ####           Solve, calculate edgepath: print out solution           ####
